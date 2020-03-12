@@ -14,8 +14,12 @@ daily_reports <- readRDS("data/daily_reports_country.RDS")
 # TRATAMIENTO -------------------------------------------------------------
 
 last_data <- daily_reports %>% 
-  filter(country %in% c("Italia", "España")) %>% 
-  top_n(1, wt = date)
+  # filter(country %in% c("Italia", "España", "China")) %>% 
+  top_n(1, wt = date) %>% 
+  mutate(
+    deaths_porc = deaths/confirmed,
+    recovered_porc = recovered/confirmed
+    )
 
 last_date <- max(daily_reports$date)
 
@@ -58,7 +62,7 @@ p <- p +
   annotate("text",
            x = last_date - 0.25 - (last_date - date_italy_eq_spain)/2,
            y = last_confirmed_spain + 250, 
-           label = "Diferencia de 9 días",
+           label = "Diferencia de unos 10 días",
            size = 8,
            hjust = "center",
            color = "#333333",
@@ -67,7 +71,7 @@ p <- p +
 
 p <- p +
   geom_line(size = 1.5) +
-  geom_text(data = last_data,
+  geom_text(data = last_data %>% filter(country %in% c("España", "Italia")),
             aes(
               x = date, 
               y = confirmed, 
@@ -89,8 +93,15 @@ p <- p +
                )
     ) +
   scale_x_date(
-    date_breaks = "1 week", 
-    date_labels = "%d %B", 
+    # date_breaks = "1 week", 
+    breaks = c(seq(as.Date("2020-02-17"),
+                      last_date,
+                      by = "1 week"),
+                    last_date), 
+    # date_labels = "%d %B", 
+    labels = function(x) ifelse(x == last_date,
+                                paste0(as.character(x, format = "%d %B"), "\n(hoy)"),
+                                as.character(x, format = "%d %B")),
     expand = expand_scale(add = c(0,3))
     ) +
   scale_y_continuous(
@@ -104,7 +115,7 @@ p <- p +
 p <- p +
   labs(
     title = "Evolución de los casos\nconfirmados de coronavirus",
-    caption = "Fuente: Johns Hopkins CSSE.\n@papabloblog",
+    caption = "Fuente: Johns Hopkins CSSE.\ngithub.com/papabloblo/coronavirus",
     y = "",
     x = ""
   )
@@ -146,8 +157,8 @@ p2 <- daily_reports %>%
     # xend = unique(last_date$date)-1,
     # y = conf_spain-250, 
     # yend = conf_spain-250,
-    x = unique(last_date$date)+0.5, 
-    xend = unique(last_date$date)+0.5,
+    x = last_date + 0.5, 
+    xend = last_date + 0.5,
     y = 0.25, 
     yend = 1,
     # linetype = "dashed",
@@ -196,13 +207,59 @@ p2 <- daily_reports %>%
     title = "Porcenaje de casos recuperados y muertos\nrespecto del total de confirmados en China",
     x = "",
     y = "",
-    caption = "Fuente: Johns Hopkins CSSE.\n@papabloblog"
+    caption = "Fuente: Johns Hopkins CSSE.\ngithub.com/papabloblo/coronavirus"
   ) + 
-  geom_vline(xintercept = as.Date("2020-03-08"), color = "white", size = 2) + 
-  annotate("text", x = as.Date("2020-03-09"), y = .4, label = "60%", color = "white", size = 10, family = "Oswald") +
-  annotate("text", x = as.Date("2020-03-09"), y = .02, label = "3%", color = "white", size = 8, family = "Oswald") +
-  annotate("text", x = as.Date("2020-03-07"), y = .4, label = "Recuperados", color = "white", size = 13, family = "Oswald", hjust = "right") +
-  annotate("text", x = as.Date("2020-03-07"), y = .02, label = "Muertos", color = "white", size = 10, family = "Oswald", hjust = "right")
+  # geom_vline(xintercept = last_date - 2, color = "white", size = 2) + 
+  
+  geom_rect(
+    aes(
+    xmin = last_date + 0.25,
+    xmax = last_date + 2.25,
+    ymin = 0,
+    ymax = last_data$recovered_porc[last_data$country == "China"] + 
+      last_data$deaths_porc[last_data$country == "China"]
+    ),
+    fill = "steelblue"
+  ) +
+  geom_rect(
+    aes(
+      xmin = last_date + 0.25,
+      xmax = last_date + 2.25,
+      ymin = 0,
+      ymax = last_data$deaths_porc[last_data$country == "China"]
+    ),
+    fill = "#333333"
+  ) +
+  annotate(
+    "text",
+    x = last_date + 1.25, 
+    y = .4, 
+    label = scales::percent(last_data$recovered_porc[last_data$country == "China"]), 
+    color = "white",
+    size = 9, 
+    family = "Oswald"
+  ) +
+  annotate(
+    "text",
+    x = last_date + 1.25, 
+    y = .02, 
+    label = scales::percent(last_data$deaths_porc[last_data$country == "China"]),
+    color = "white",
+    size = 8,
+    family = "Oswald"
+  ) +
+  annotate("text", x = last_date - 1, y = .4, label = "Recuperados", color = "white", size = 13, family = "Oswald", hjust = "right") +
+  annotate("text", x = last_date - 1, y = .02, label = "Muertos", color = "white", size = 10, family = "Oswald", hjust = "right") +
+  annotate(
+    "text",
+    x = last_date + 1.25, 
+    y = last_data$recovered_porc[last_data$country == "China"] + 
+      last_data$deaths_porc[last_data$country == "China"] - 0.02, 
+    label = "Hoy",
+    color = "white",
+    size = 13,
+    family = "Oswald"
+  )
 
 ggsave("dataviz/china.png", p2, width = 50, height = 40, unit = "cm", dpi = 320)
 
