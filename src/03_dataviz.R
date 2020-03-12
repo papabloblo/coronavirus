@@ -46,7 +46,7 @@ p <- df_italia_esp %>%
 
 p <- p +
   geom_segment(
-    x = date_italy_eq_spain + 0.25, 
+    x = date_italy_eq_spain + 0.75, 
     xend = last_date - 0.25,
     y = last_confirmed_spain, 
     yend = last_confirmed_spain,
@@ -95,10 +95,11 @@ p <- p +
     ) +
   scale_y_continuous(
     labels = scales::comma_format(), 
-    breaks = seq(0, 10000, by = 2500), 
-    minor_breaks = seq(0, 10000, 1250), 
+    breaks = seq(0, 12500, by = 2500), 
+    minor_breaks = seq(0, 12500, 1250), 
     position = "right"
     )
+
 
 p <- p +
   labs(
