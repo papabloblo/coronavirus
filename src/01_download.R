@@ -76,6 +76,10 @@ daily_reports_country <- daily_reports %>%
   summarise_at(c("confirmed", "deaths", "recovered"), sum) %>% 
   ungroup()
 
+daily_reports_country$confirmed[daily_reports_country$country == "España" &
+                                  daily_reports_country$date == as.Date("2020-03-12")] <- 3142
+daily_reports_country$confirmed[daily_reports_country$country == "Italia" &
+                                  daily_reports_country$date == as.Date("2020-03-12")] <- 15113
 
 
 # GUARDADO ----------------------------------------------------------------

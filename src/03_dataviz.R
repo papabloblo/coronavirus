@@ -60,9 +60,9 @@ p <- p +
     arrow = arrow(ends = "both", type = "closed")
     ) +
   annotate("text",
-           x = last_date - 0.25 - (last_date - date_italy_eq_spain)/2,
-           y = last_confirmed_spain + 250, 
-           label = "Diferencia de unos 10 días",
+           x = last_date - 0.25 - (last_date - 0.25 - date_italy_eq_spain - 0.75)/2,
+           y = last_confirmed_spain + 500, 
+           label = paste((last_date - date_italy_eq_spain), "días"),
            size = 8,
            hjust = "center",
            color = "#333333",
@@ -100,14 +100,16 @@ p <- p +
                     last_date), 
     # date_labels = "%d %B", 
     labels = function(x) ifelse(x == last_date,
-                                paste0(as.character(x, format = "%d %B"), "\n(hoy)"),
+                                paste0(as.character(x, format = "%d %B"), 
+                                       "\n(actualización)"
+                                       ),
                                 as.character(x, format = "%d %B")),
     expand = expand_scale(add = c(0,3))
     ) +
   scale_y_continuous(
     labels = scales::comma_format(), 
-    breaks = seq(0, 12500, by = 2500), 
-    minor_breaks = seq(0, 12500, 1250), 
+    breaks = seq(0, 15000, by = 2500), 
+    minor_breaks = seq(0, 15000, 1250), 
     position = "right"
     )
 
