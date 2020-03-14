@@ -81,6 +81,23 @@ daily_reports_country$confirmed[daily_reports_country$country == "España" &
 daily_reports_country$confirmed[daily_reports_country$country == "Italia" &
                                   daily_reports_country$date == as.Date("2020-03-12")] <- 15113
 
+daily_reports_country <- daily_reports_country %>% 
+  group_by(country) %>% 
+  arrange(date) %>% 
+  mutate(
+    deaths_porc = deaths/confirmed,
+    recovered_porc = recovered/confirmed,
+    confirmed_inc = confirmed - lag(confirmed)
+  ) %>% 
+  mutate_at(
+    c("confirmed", 
+      "deaths", 
+      "recovered"),
+    list("inc" = function(x) x - lag(x))
+  ) %>% 
+  ungroup()
+
+
 
 # GUARDADO ----------------------------------------------------------------
 

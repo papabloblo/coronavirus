@@ -108,8 +108,8 @@ p <- p +
     ) +
   scale_y_continuous(
     labels = scales::comma_format(), 
-    breaks = seq(0, 15000, by = 2500), 
-    minor_breaks = seq(0, 15000, 1250), 
+    breaks = seq(0, 17500, by = 2500), 
+    minor_breaks = seq(0, 17500, 1250), 
     position = "right"
     )
 
