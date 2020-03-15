@@ -23,7 +23,7 @@ daily_reports <- daily_reports %>%
 date_italy_eq_spain <- date_same_level("Italia", "España")
 dif_dias_italia_esp <- last_date() - date_italy_eq_spain
 
-
+max_scale_x <- 2500*floor(last_confirmed("Italia")/2500)
 
 # GRÁFICO BASE ------------------------------------------------------------
 
@@ -115,8 +115,8 @@ p <- p +
   ) +
   scale_y_continuous(
     labels = scales::comma_format(), 
-    breaks = seq(0, 17500, by = 2500), 
-    minor_breaks = seq(0, 17500, 1250), 
+    breaks = seq(0, max_scale_x, by = 2500), 
+    minor_breaks = seq(0, max_scale_x, 1250), 
     position = "right"
   )
 
