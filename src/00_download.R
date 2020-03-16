@@ -97,6 +97,23 @@ daily_reports_country <- daily_reports_country %>%
   ) %>% 
   ungroup()
 
+daily_reports_country <- daily_reports_country %>% 
+  mutate(
+    country = case_when(
+      country == "Korea, South" ~ "South Korea",
+      country == "Iran (Islamic Republic of)" ~ "Iran"
+      TRUE ~ country
+    )
+  )
+
+
+first_100 <- daily_reports_country %>% 
+  group_by(country) %>% 
+  filter(confirmed >= 100) %>% 
+  summarise(date_100 = min(date))
+
+daily_reports_country <- daily_reports_country %>% 
+  left_join(first_100)
 
 
 # GUARDADO ----------------------------------------------------------------
