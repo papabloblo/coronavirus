@@ -113,7 +113,8 @@ p <- dif_dias %>%
         ymin = dif_dias - 1,
         ymax = dif_dias),
     color = "white",
-    fill = "steelblue"
+    fill = "steelblue",
+    size = 2
   ) +
   # geom_step(aes(y = dif), color = "orange2", size = 5) +
   geom_text(
