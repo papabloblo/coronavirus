@@ -76,9 +76,13 @@ p <- daily_reports %>%
     caption = "Fuente: Johns Hopkins CSSE.\ngithub.com/papabloblo/coronavirus"
   ) +
   scale_x_continuous(breaks = seq(0, 25, by = 2), 
-                     labels = function(x) paste("+", x)
+                     labels = function(x) ifelse(x == 2,
+                                                 paste("+", x, "días"),
+                                                 x)
                      ) +
-  scale_y_log10(position = "right") +
+  scale_y_log10(position = "right",
+                labels = scales::comma_format(),
+                breaks = c(100, 500, 1000, 2500, 5000, 20000)) +
   scale_color_manual(
     values = c("España" = "orange2",
                "Otros" = "#333333",
