@@ -154,7 +154,7 @@ p <- p +
 
 p <- p +
   labs(
-    title = "Porcenaje de casos recuperados y muertos\nrespecto del total de confirmados en China",
+    title = "Porcentaje de casos recuperados y muertos\nrespecto del total de confirmados en China",
     x = "",
     y = "",
     caption = "Fuente: Johns Hopkins CSSE.\ngithub.com/papabloblo/coronavirus"
