@@ -4,3 +4,4 @@
 
 ![](dataviz/italia_vs_espana.png)
 ![](dataviz/china.png)
+![](dataviz/dif_dias.png)
