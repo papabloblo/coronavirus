@@ -125,7 +125,8 @@ p <- dif_dias %>%
   ) +
   scale_x_date(date_breaks = "2 days",
                date_labels = "%d %B", ) +
-  scale_y_continuous(limits = c(0, NA), breaks = 1:10) +
+  scale_y_continuous(limits = c(0, NA), breaks = 1:10,
+                     position = "right") +
   # coord_flip() + 
   labs(
     title = "¿Cuántos días hace\nque Italia estaba como España?",

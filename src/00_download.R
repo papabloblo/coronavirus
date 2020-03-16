@@ -101,7 +101,7 @@ daily_reports_country <- daily_reports_country %>%
   mutate(
     country = case_when(
       country == "Korea, South" ~ "South Korea",
-      country == "Iran (Islamic Republic of)" ~ "Iran"
+      country == "Iran (Islamic Republic of)" ~ "Iran",
       TRUE ~ country
     )
   )
