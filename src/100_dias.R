@@ -1,3 +1,5 @@
+library(tidyverse)
+
 daily_reports <- readRDS("data/daily_reports_country.RDS")
 
 daily_reports <- daily_reports %>% 
@@ -47,7 +49,9 @@ p <- daily_reports %>%
     )
   ) + 
   geom_line() +
-  geom_line(data = daily_reports %>% filter(country == "España"), aes(color = country), size = 3) +
+  geom_line(data = daily_reports %>% filter(country == "España"), 
+            aes(color = country), 
+            size = 3) +
   geom_label(data =
               daily_reports %>%
               filter(
@@ -67,7 +71,7 @@ p <- daily_reports %>%
 
             hjust = "center",
             family = "Oswald",
-            label.r = unit(0, "lines")
+            label.r = unit(0, "lines"),
   ) +
   labs(
     title = "Evolución después de los\n100 primeros casos confirmados",
@@ -80,9 +84,9 @@ p <- daily_reports %>%
                                                  paste("+", x, "días"),
                                                  x)
                      ) +
-  scale_y_log10(position = "right",
-                labels = scales::comma_format(),
-                breaks = c(100, 500, 1000, 2500, 5000, 20000)) +
+  # scale_y_log10(position = "right",
+  #               labels = scales::comma_format(),
+  #               breaks = c(100, 500, 1000, 2500, 5000, 20000)) +
   scale_color_manual(
     values = c("España" = "orange2",
                "Otros" = "#333333",
@@ -101,19 +105,19 @@ ggsave("dataviz/espanya_log.png",
        dpi = 320
 )
 
-
-daily_reports %>% 
-  filter(
-    
-    !(country %in% c("Iran (Islamic Republic of)",
-                     "Republic of Korea", 
-                     "Korea, South")),
-    country %in% c("España", "Italia", "South Korea", "France", "Iran")
-  ) %>% 
-  ggplot(
-    aes(
-      x = dias,
-      y = confirmed
-    )
-  ) + 
-  geom_point(alpha = 0.6, size = 5)
+# 
+# daily_reports %>% 
+#   filter(
+#     
+#     !(country %in% c("Iran (Islamic Republic of)",
+#                      "Republic of Korea", 
+#                      "Korea, South")),
+#     country %in% c("España", "Italia", "South Korea", "France", "Iran")
+#   ) %>% 
+#   ggplot(
+#     aes(
+#       x = dias,
+#       y = confirmed
+#     )
+#   ) + 
+#   geom_point(alpha = 0.6, size = 5)
