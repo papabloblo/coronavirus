@@ -1,37 +1,45 @@
 
+#' GENERACIÓN DE LOS CONJUNTOS DE DATOS
+#' 
+#' Lectura de los .csv diarios data/raw/yyyy-mm-dd.csv
+#' Se concatenan en un único data.frame 
+#' Se agregan los datos a nivel país.
+#' Se traducen los nombres de los países relevantes para el estudio.
+#' Se calculan porcentajes e incrementos.
+#' Se calcula `date_100`, la primera fecha en la que se
+#' superaron los 100 casos.
+#' 
+#' Se generan los archivos:
+#'   - data/daily_reports_country.RDS: datos agregados por países.
+#'   - data/lat_long.RDS: latitud y longitud de los países
+#' 
 
 # DEPENDENCIAS ------------------------------------------------------------
 
 library(tidyverse)
 
 
-# DESCARGA ----------------------------------------------------------------
+# LECTURA DE .CSV ---------------------------------------------------------
 
-url_base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
-
-date_period <- seq(from = as.Date("2020-01-22"),
-                   to = Sys.Date() - 1,
-                   by = "day") 
+files <- list.files("data/raw", full.names = TRUE)
 
 
-read_daily_reports <- function(d){
-
-      daily_report <- readr::read_csv(paste0(url_base,
-                                             as.character(d, format = "%m-%d-%Y"),
-                                             ".csv"))
-      daily_report$`Last Update` <- NULL
-      daily_report$date <- as.Date(d)
-      return(daily_report)
-
-  }
+read_daily_csv <- function(file_csv){
+  daily_report <- readr::read_csv(file_csv)
+  daily_report$`Last Update` <- NULL
+  daily_report$date <- as.Date(stringr::str_extract(file_csv,"\\d*-\\d*-\\d*"))
+  return(daily_report)
+  
+}
 
 daily_reports <- purrr::map_df(
-  date_period, 
-  read_daily_reports
-  )
+  files, 
+  read_daily_csv
+)
 
 
 # TRATAMIENTO -------------------------------------------------------------
+
 
 names(daily_reports) <- tolower(names(daily_reports))
 
@@ -64,9 +72,15 @@ daily_reports[is.na(daily_reports)] <- 0
 daily_reports <- daily_reports %>% 
   mutate(
     country = case_when(
-      country == "Spain" ~ "España",
-      country == "Italy" ~ "Italia",
-      country == "Mainland China" ~ "China",
+      country == "Spain"                      ~ "España",
+      country == "Italy"                      ~ "Italia",
+      country == "Mainland China"             ~ "China",
+      country == "France"                     ~ "Francia",
+      country == "South Korea"                ~ "Corea del Sur",
+      country == "Iran"                       ~ "Irán",
+      country == "Germany"                    ~ "Alemania",
+      country == "Korea, South"               ~ "Corea del Sur",
+      country == "Iran (Islamic Republic of)" ~ "Irán",
       TRUE ~ country
     )
   )
@@ -96,16 +110,6 @@ daily_reports_country <- daily_reports_country %>%
     list("inc" = function(x) x - lag(x))
   ) %>% 
   ungroup()
-
-daily_reports_country <- daily_reports_country %>% 
-  mutate(
-    country = case_when(
-      country == "Korea, South" ~ "South Korea",
-      country == "Iran (Islamic Republic of)" ~ "Iran",
-      TRUE ~ country
-    )
-  )
-
 
 first_100 <- daily_reports_country %>% 
   group_by(country) %>% 

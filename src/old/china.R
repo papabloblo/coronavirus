@@ -7,16 +7,29 @@ source("src/utils.R")
 source("src/tema_ggplot2.R")
 theme_set(tema())
 
-first_date <- "2020-02-15"
+first_date <- "2020-03-01"
 
 # DATOS -------------------------------------------------------------------
 
 daily_reports <- readRDS("data/daily_reports_country.RDS")
 daily_reports <- daily_reports %>% 
   filter(
-    country == "China",
-    date >= as.Date(first_date)
+    # country == "China",
+    country %in% c(
+      # "China",
+                   "España",
+                   "Italia", 
+                   "Corea\ndel Sur",
+                   "Francia",
+                   "Irán",
+                   "Alemania"
+    ),
+    date >= as.Date(date_100)
     ) %>% 
+  mutate(
+    dias_100 = as.numeric(date - date_100),
+    confirmed = confirmed - recovered - deaths
+  ) %>% 
   pivot_longer(cols = confirmed:recovered_inc,
                names_to = "type",
                values_to = "count"
@@ -47,9 +60,9 @@ last_recovered_porc <- daily_reports[daily_reports$type == "recovered_porc" &
 # GRÁFICO BASE ------------------------------------------------------------
 
 p <- daily_reports %>% 
-  filter(type %in% c("recovered_porc", "deaths_porc")) %>% 
+  filter(type %in% c("confirmed", "recovered", "deaths")) %>% 
   ggplot(
-    aes(x = date,
+    aes(x = dias_100,
         y = count,
         group = type,
         fill = type
@@ -61,7 +74,20 @@ p <- daily_reports %>%
 # ÁREAS -------------------------------------------------------------------
 
 p <- p +
-  geom_area()
+  geom_area() +
+  facet_wrap(~country)
+
+
+
+p <- p +
+  scale_fill_manual(values = c("confirmed" = "orange2", 
+                               "deaths" = "#333333",
+                               "recovered" = "steelblue")
+  ) +
+  scale_y_continuous( 
+                     position = "right")
+
+
 
 p <- p +
   annotate("text", 
@@ -142,9 +168,9 @@ p <- p +
 # ESCALA ------------------------------------------------------------------
 
 p <- p +
-  scale_fill_manual(values = c("confirmed_porc" = "orange2", 
-                               "deaths_porc" = "#333333",
-                               "recovered_porc" = "steelblue")
+  scale_fill_manual(values = c("confirmed" = "orange2", 
+                               "deaths" = "#333333",
+                               "recovered" = "steelblue")
   ) +
   scale_y_continuous(labels = scales::percent, 
                      position = "right")

@@ -1,6 +1,8 @@
 #'
 #' COMPARATIVA DE CASOS CONFIRMADOS ENTRE ITALIA Y ESPAÑA
 #' 
+#' Salida dataviz/italia_vs_espanya.png
+#' 
 
 
 # DEPENDENCIAS ------------------------------------------------------------
