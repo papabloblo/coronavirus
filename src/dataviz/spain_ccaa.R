@@ -27,7 +27,8 @@ p <- spain_ccaa %>%
             size = 5
             ) +
   scale_color_manual(values = ccaa_colors) +
-  scale_x_date(expand = expand_scale(add = c(0,15)), 
+  scale_y_continuous(position = "right") +
+  scale_x_date(expand = expand_scale(add = c(0,10)), 
                date_labels = "%B")+
   geom_label(data = ccaa_labels, 
              aes(x = date, label = province, color = province), 
@@ -45,7 +46,7 @@ p <- spain_ccaa %>%
   ) +
   tema() + 
   theme(
-    legend.position = "none",
+    legend.position = "none"
   )
 
 

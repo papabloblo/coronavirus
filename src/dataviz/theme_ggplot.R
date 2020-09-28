@@ -2,12 +2,12 @@ tema <- function(){
   theme_minimal() +
     theme(
       text = element_text(color = "#333333"),
-      plot.caption = element_text(family = "Montserrat"),
+      plot.caption = element_text(family = "Oswald"),
       panel.grid.minor = element_blank(),
-      
-      axis.text.y = element_text(hjust = 0, family = "Oswald", size = 12),
-      axis.text.x.top = element_text(hjust = 0, family = "Oswald", size = 12),
-      axis.text.x = element_text(family = "Roboto", size = 12),
+      axis.
+      axis.text.y = element_text(hjust = 0, family = "Oswald", size = 30),
+      axis.text.x.top = element_text(hjust = 0, family = "Oswald", size = 30),
+      axis.text.x = element_text(family = "Oswald", size = 30),
       
       strip.text = element_text(angle = 0, 
                                 hjust = 0,
