@@ -23,13 +23,28 @@ library(tidyverse)
 
 files <- list.files("data/raw", full.names = TRUE)
 
-
 read_daily_csv <- function(file_csv){
-  daily_report <- readr::read_csv(file_csv)
+  daily_report <- readr::read_csv(file_csv, 
+                                  col_types = cols(
+                                    FIPS = col_character(),
+                                    Admin2 = col_character(),
+                                    Province_State = col_character(),
+                                    Country_Region = col_character(),
+                                    Last_Update = col_datetime(format = ""),
+                                    Lat = col_double(),
+                                    Long_ = col_double(),
+                                    Confirmed = col_double(),
+                                    Deaths = col_double(),
+                                    Recovered = col_double(),
+                                    Active = col_double(),
+                                    Combined_Key = col_character(),
+                                    Incidence_Rate = col_double(),
+                                    `Case-Fatality_Ratio` = col_double()
+                                    )
+                                  )
   daily_report$`Last Update` <- NULL
   daily_report$date <- as.Date(stringr::str_extract(file_csv,"\\d*-\\d*-\\d*"))
   return(daily_report)
-  
 }
 
 daily_reports <- purrr::map_df(
@@ -40,87 +55,111 @@ daily_reports <- purrr::map_df(
 
 # TRATAMIENTO -------------------------------------------------------------
 
-
 names(daily_reports) <- tolower(names(daily_reports))
 
-daily_reports <- daily_reports %>% 
-  rename(
-    province = `province/state`, 
-    country = `country/region`
-  )
+names(daily_reports)[names(daily_reports) == "case-fatality_ratio"] <- "case_fatality_ratio"
+
+# Columnas con la misma información pero distinto nombre
+
+daily_reports <- daily_reports %>%
+  mutate(
+    country = ifelse(!is.na(`country/region`), `country/region`, country_region),
+    province = ifelse(!is.na(`province/state`), `province/state`, province_state)
+  ) %>% 
+  select(-`country/region`, -country_region, -`province/state`, -province_state)
+  
+
+
+# Latitud y longitud ------------------------------------------------------
 
 lat_long <- daily_reports %>% 
   select(
-    province,
     country,
+    province,
     latitude, 
-    longitude
+    longitude,
+    lat,
+    long_
   ) %>% 
-  distinct() %>% 
+  mutate(
+    latitude = ifelse(!is.na(latitude), latitude, lat),
+    longitude = ifelse(!is.na(longitude), longitude, long_)
+  ) %>% 
+  select(-lat, -long_) %>% 
   filter(!is.na(latitude)) %>% 
-  group_by(country) %>% 
+  unique() %>% 
+  group_by(country, province) %>% 
   summarise(
     latitude = mean(latitude),
     longitude = mean(longitude)
-  )
-
-daily_reports <- daily_reports %>% 
-  select(-latitude, -longitude)
-
-daily_reports[is.na(daily_reports)] <- 0
-
-daily_reports <- daily_reports %>% 
-  mutate(
-    country = case_when(
-      country == "Spain"                      ~ "España",
-      country == "Italy"                      ~ "Italia",
-      country == "Mainland China"             ~ "China",
-      country == "France"                     ~ "Francia",
-      country == "South Korea"                ~ "Corea del Sur",
-      country == "Iran"                       ~ "Irán",
-      country == "Germany"                    ~ "Alemania",
-      country == "Korea, South"               ~ "Corea del Sur",
-      country == "Iran (Islamic Republic of)" ~ "Irán",
-      TRUE ~ country
-    )
-  )
-
-daily_reports_country <- daily_reports %>% 
-  group_by(date, country) %>% 
-  summarise_at(c("confirmed", "deaths", "recovered"), sum) %>% 
+  ) %>% 
   ungroup()
+  
 
-daily_reports_country$confirmed[daily_reports_country$country == "España" &
-                                  daily_reports_country$date == as.Date("2020-03-12")] <- 3142
-daily_reports_country$confirmed[daily_reports_country$country == "Italia" &
-                                  daily_reports_country$date == as.Date("2020-03-12")] <- 15113
+daily_reports <- daily_reports %>% 
+  select(-latitude, -longitude, -lat, -long_)
 
-daily_reports_country <- daily_reports_country %>% 
-  group_by(country) %>% 
+
+# Variables relevantes
+daily_reports <- daily_reports %>% 
+  select(
+    country,
+    province,
+    date, 
+    confirmed,
+    deaths,
+    recovered,
+    active,
+    incidence_rate,
+    case_fatality_ratio
+  )
+
+# Valores no informados imputados a 0
+daily_reports <- daily_reports %>% 
+  mutate_at(
+    vars(confirmed:case_fatality_ratio),
+    function(x) ifelse(is.na(x), 0, x)
+  )
+
+# Cálculo de datos no acumulados
+
+daily_reports <- daily_reports %>% 
+  rename(
+    confirmed_acum = confirmed,
+    deaths_acum = deaths,
+    recovered_acum = recovered,
+    active_acum = active
+  )
+
+
+daily_reports <- daily_reports %>% 
+  group_by(country, province) %>% 
   arrange(date) %>% 
   mutate(
-    deaths_porc = deaths/confirmed,
-    recovered_porc = recovered/confirmed,
-    confirmed_inc = confirmed - lag(confirmed)
-  ) %>% 
-  mutate_at(
-    c("confirmed", 
-      "deaths", 
-      "recovered"),
-    list("inc" = function(x) x - lag(x))
+    confirmed = confirmed_acum - lag(confirmed_acum, default = 0),
+    deaths = deaths_acum - lag(deaths_acum, default = 0),
+    recovered = recovered_acum - lag(recovered_acum, default = 0),
   ) %>% 
   ungroup()
 
-first_100 <- daily_reports_country %>% 
-  group_by(country) %>% 
-  filter(confirmed >= 100) %>% 
-  summarise(date_100 = min(date))
 
-daily_reports_country <- daily_reports_country %>% 
-  left_join(first_100)
+# Población
 
+population <- daily_reports %>% 
+  mutate(
+    population = (confirmed_acum/incidence_rate)*100000
+  ) %>% 
+  select(country, province, population) %>% 
+  filter(is.finite(population)) %>% 
+  group_by(country, province) %>% 
+  summarise(population = mean(population)) %>% 
+  ungroup()
+  
+
+population$population[population$country == "Spain" & is.na(population$province)] <- 47329981
 
 # GUARDADO ----------------------------------------------------------------
 
-saveRDS(daily_reports_country, "data/daily_reports_country.RDS")
-saveRDS(lat_long, "data/lat_long.RDS")
+saveRDS(daily_reports, "data/01_tratamiento/daily_reports.RDS")
+saveRDS(lat_long, "data/01_tratamiento/lat_long.RDS")
+saveRDS(population, "data/01_tratamiento/population.RDS")
