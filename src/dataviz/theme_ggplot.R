@@ -2,7 +2,7 @@ tema <- function(){
   theme_minimal() +
     theme(
       text = element_text(color = "#333333"),
-      plot.caption = element_text(family = "Oswald"),
+      plot.caption = element_text(family = "Oswald", size = 20),
       panel.grid.minor = element_blank(),
       
       axis.text.y = element_text(hjust = 0, family = "Oswald", size = 30),
@@ -19,9 +19,9 @@ tema <- function(){
       ),
       
       plot.title = element_text(face = "bold",
-                                size = 50, 
+                                size = 80, 
                                 family = "Oswald",
-                                margin = margin(b = 10),
+                                margin = margin(t = 10, b = 20),
                                 hjust = 0.5
       ),
       plot.subtitle = element_text(size = 15, 

@@ -42,7 +42,7 @@ p <- spain_ccaa %>%
     title = "Incidencia acumulada en los 15 días anteriores\npor cada 100.000 habitantes",
     x = "",
     y = "",
-    caption = "@papabloblog"
+    caption = "Datos: github.com/CSSEGISandData/COVID-19\n@papabloblog"
   ) +
   tema() + 
   theme(
