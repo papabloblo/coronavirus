@@ -12,6 +12,7 @@ spain_ccaa <- spain_ccaa %>%
     province == "Castilla y Leon" ~ "Castilla y León",
     province == "Aragon" ~ "Aragón",
     province == "Pais Vasco" ~ "País Vasco",
+    province == "Catalonia" ~ "Cataluña",
     TRUE ~ province
   ))
 
