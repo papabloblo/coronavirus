@@ -34,10 +34,11 @@ p <- spain_ccaa %>%
              hjust = "left",
               vjust = "bottom",
              nudge_x = 3) +
+  #geom_point(data = ccaa_labels, size = 10, fill = "white", shape = 21) + 
   facet_wrap(.~ province, ncol = 3, scales = "free_x") + 
   labs(
     title = "Incidencia en los últimos 15 días\npor 100.000 habitantes",
-    subtitle = "En <span style='color:#CD8500;'>naranja</span>, las provincias con una incidencia superior a 500",
+    subtitle = "En <span style='color:#e84545;'>rojo</span>, las comunidades autónomas con una incidencia superior a 500",
     x = "",
     y = ""
     ) +
@@ -48,9 +49,9 @@ p <- spain_ccaa %>%
         axis.text.x.top = element_text(hjust = 0, family = "Oswald", size = 30),
         axis.text.x = element_text(family = "Oswald", size = 20),
         plot.title = element_text(face = "bold",
-                                  size = 80, 
+                                  size = 70, 
                                   family = "Oswald",
-                                  margin = margin(t = 50, b = 30),
+                                  margin = margin(r = 50, l = 50, t = 50, b = 30),
                                   hjust = 0.5
         ),
         plot.subtitle = element_markdown(size = 40, 
@@ -60,7 +61,8 @@ p <- spain_ccaa %>%
                                      hjust = 0.5
         ),
         ) + 
-  scale_color_manual(values = c(">500" = "#CD8500", "<500" = "#555555")) + 
+  #scale_color_manual(values = c(">500" = "#CD8500", "<500" = "#555555")) + 
+  scale_color_manual(values = c(">500" = "#e84545", "<500" = "#555555")) + 
   scale_y_continuous(breaks = c(0, 500, 1000)) + 
   scale_x_date(expand = expand_scale(add = c(0,20)), 
                date_labels = "%B",
