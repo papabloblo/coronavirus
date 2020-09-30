@@ -44,7 +44,14 @@ p <- spain_ccaa %>%
         legend.position = "none",
         axis.text.y = element_text(hjust = 0, family = "Oswald", size = 20),
         axis.text.x.top = element_text(hjust = 0, family = "Oswald", size = 30),
-        axis.text.x = element_text(family = "Oswald", size = 20)) + 
+        axis.text.x = element_text(family = "Oswald", size = 20),
+        plot.title = element_text(face = "bold",
+                                  size = 80, 
+                                  family = "Oswald",
+                                  margin = margin(t = 50, b = 80),
+                                  hjust = 0.5
+        )
+        ) + 
   scale_color_manual(values = c("Madrid" = "orange3", "Otras" = "#555555")) + 
   scale_y_continuous(breaks = c(0, 500, 1000)) + 
   scale_x_date(expand = expand_scale(add = c(0,20)), 
