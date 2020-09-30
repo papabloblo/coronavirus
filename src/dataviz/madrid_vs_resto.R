@@ -1,4 +1,5 @@
-
+library(ggtext)
+library(ggplot2)
 madrid <- spain_ccaa %>% 
   filter(province == "Madrid") %>% 
   select(date, incidence_100k_15d_acum)
@@ -12,7 +13,7 @@ ccaa_labels <- spain_ccaa %>%
   top_n(1, date) %>% 
   ungroup() %>% 
   mutate(
-    color = ifelse(province == "Madrid", "Madrid", "Otras"),
+      color = ifelse(province %in% c("Madrid", "Navarra", "Castilla - La Mancha"), ">500", "<500"),
     incidence_100k_15d_acum = floor(incidence_100k_15d_acum))
 
 order_ccaa <- ccaa_labels %>% 
@@ -24,7 +25,7 @@ ccaa_labels$province <- factor(ccaa_labels$province, levels = order_ccaa$provinc
 
 
 p <- spain_ccaa %>% 
-  mutate(color = ifelse(province == "Madrid", "Madrid", "Otras")) %>% 
+  mutate(color = ifelse(province %in% c("Madrid", "Navarra", "Castilla - La Mancha"), ">500", "<500")) %>% 
   ggplot(aes(x = date, y = incidence_100k_15d_acum)) + 
   geom_line(aes(color = color), size = 3) +
   geom_text(data = ccaa_labels, 
@@ -36,6 +37,7 @@ p <- spain_ccaa %>%
   facet_wrap(.~ province, ncol = 3, scales = "free_x") + 
   labs(
     title = "Incidencia en los últimos 15 días\npor 100.000 habitantes",
+    subtitle = "En <span style='color:#CD8500;'>naranja</span>, las provincias con una incidencia superior a 500",
     x = "",
     y = ""
     ) +
@@ -48,11 +50,17 @@ p <- spain_ccaa %>%
         plot.title = element_text(face = "bold",
                                   size = 80, 
                                   family = "Oswald",
-                                  margin = margin(t = 50, b = 80),
+                                  margin = margin(t = 50, b = 30),
                                   hjust = 0.5
-        )
+        ),
+        plot.subtitle = element_markdown(size = 40, 
+                                     face = "italic",
+                                     family = "Oswald",
+                                     margin = margin(b = 50),
+                                     hjust = 0.5
+        ),
         ) + 
-  scale_color_manual(values = c("Madrid" = "orange3", "Otras" = "#555555")) + 
+  scale_color_manual(values = c(">500" = "#CD8500", "<500" = "#555555")) + 
   scale_y_continuous(breaks = c(0, 500, 1000)) + 
   scale_x_date(expand = expand_scale(add = c(0,20)), 
                date_labels = "%B",
