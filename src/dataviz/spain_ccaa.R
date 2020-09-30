@@ -6,7 +6,15 @@ source("src/dataviz/theme_ggplot.R")
 spain_ccaa <- readRDS("data/01_tratamiento/country_province.RDS")
 
 spain_ccaa <- spain_ccaa %>% 
-  filter(country == "Spain", date > as.Date("2020-06-01"))
+  filter(country == "Spain", date > as.Date("2020-06-01")) %>% 
+  mutate(province = case_when(
+    province == "Andalusia" ~ "Andalucía",
+    province == "Castilla y Leon" ~ "Castilla y León",
+    province == "Aragon" ~ "Aragón",
+    province == "Pais Vasco" ~ "País Vasco",
+    TRUE ~ province
+  ))
+
 
 ccaa_highlight <- spain_ccaa %>% 
   filter(province %in% c("Madrid", "Aragon", "Navarra"))
