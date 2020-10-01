@@ -52,10 +52,10 @@ spain_ccaa <- spain_ccaa %>%
 p <- spain_ccaa %>% 
   ggplot(aes(x = date, y = incidence_100k_15d_acum)) + 
   geom_line(color = "#555555",
-    size = 3) +
+    size = 3, lineend = "round") +
   geom_line(data = spain_ccaa %>% filter(incidence_100k_15d_acum >= 500),
     aes(color = color, group = segmento), 
-    size = 3) +
+    size = 3, lineend = "round") +
   #geom_line(data = more_500, aes(color = color), size = 3) +
   geom_text(data = ccaa_labels, 
              aes(x = date, label = incidence_100k_15d_acum, color = color), 
