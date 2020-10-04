@@ -13,11 +13,11 @@ country_province <- daily_reports %>%
   group_by(country, province) %>% 
   arrange(date) %>% 
   mutate(
-     confirmed_acum_15d = confirmed_acum - lag(confirmed_acum, n = 15L, default = 0),
-     incidence_100k_15d_acum = confirmed_acum_15d/population*100000,
+     confirmed_acum_14d = confirmed_acum - lag(confirmed_acum, n = 14L, default = 0),
+     incidence_100k_14d_acum = confirmed_acum_15d/population*100000,
      
-     deaths_acum_15d = deaths_acum - lag(deaths_acum, n = 15L, default = 0),
-     deaths_100k_15d_acum = deaths_acum/population*100000
+     deaths_acum_14d = deaths_acum - lag(deaths_acum, n = 14L, default = 0),
+     deaths_100k_14d_acum = deaths_acum/population*100000
     ) %>% 
   ungroup()
 

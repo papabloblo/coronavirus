@@ -1,4 +1,5 @@
-Rscript src/01_download.R
-Rscript src/02_tratamiento.R
-Rscript src/dataviz/confirmados_muertos_paises.R
-Rscript src/dataviz/italia_vs_espanya.R
+Rscript src/01_update.R
+Rscript src/02_data-processing/daily_reports-population.R
+Rscript src/02_data-processing/lat_long.R
+Rscript src/03_dataviz/spain_incidence.R
+

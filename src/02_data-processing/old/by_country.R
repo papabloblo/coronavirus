@@ -18,9 +18,3 @@ countries <- daily_reports %>%
 
 saveRDS(countries, "data/01_tratamiento/by_country.RDS")
 
-
-countries %>% 
-  filter(country %in% c("Spain", "United Kingdom")) %>% 
-  ggplot(aes(x = date, y = confirmed, group = country, colour = country)) +
-  geom_line()
-

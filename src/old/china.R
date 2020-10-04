@@ -75,7 +75,7 @@ p <- daily_reports %>%
 
 p <- p +
   geom_area() +
-  facet_wrap(~country)
+  facet_wrap(~country, scales = "free")
 
 
 

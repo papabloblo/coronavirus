@@ -1,5 +1,5 @@
 #' 
-#' DESCARGA AUTOMÁTICA DE LOS INFORMES DIARIOS
+#' ACTUALIZACIÓN AUTOMÁTICA DE LOS INFORMES DIARIOS
 #' 
 #' Descarga de los .csv actualizados diariamente en el repositorio
 #' github.com/CSSEGISandData/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports
@@ -10,8 +10,6 @@
 #' 
 
 # DESCARGA ----------------------------------------------------------------
-
-url_base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
 
 date_period <- seq(from = as.Date("2020-01-22"),
                    to = Sys.Date() - 1,
@@ -25,7 +23,7 @@ current_files <- stringr::str_remove(current_files, ".csv")
 # Solo archivos que no se hayan descargado previamente
 new_files <- setdiff(date_period, current_files)
 
-download_daily_reports <- function(d){
+download_daily_reports <- function(d, url_base){
   date_file <- as.Date(d)
   download.file(
     url = paste0(url_base,
@@ -39,8 +37,10 @@ download_daily_reports <- function(d){
 }
 
 
+url_base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+
 for (d in new_files) {
-  download_daily_reports(d)
+  download_daily_reports(d, url_base = url_base)
 }
 
 
