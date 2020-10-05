@@ -5,19 +5,32 @@ library(tidyverse)
 
 # CARGA -------------------------------------------------------------------
 
-by_country <- readRDS("data/01_tratamiento/by_country.RDS")
+daily_reports <- readRDS("data/01_tratamiento/daily_reports.RDS")
+
+countries <- daily_reports %>% 
+  group_by(country, date) %>% 
+  summarise(
+    confirmed_acum = sum(confirmed_acum),
+    deaths_acum = sum(deaths)
+  ) %>% 
+  arrange(date) %>% 
+  mutate(
+    confirmed = confirmed_acum - lag(confirmed_acum, default = 0),
+    deaths = deaths_acum - lag(deaths_acum, default = 0)
+  ) %>% 
+  ungroup()
 
 
 # SOLO ESPAÑA -------------------------------------------------------------
 
-spain <- filter(by_country, country == "Spain") %>% 
+spain <- filter(countries, country == "Spain") %>% 
   select(-confirmed_acum, -deaths_acum)
 
 readr::write_csv(spain, "data/taller_ufv/spain.csv")
 
 # SOLO ITALIA -------------------------------------------------------------
 
-italy <- filter(by_country, country == "Italy") %>% 
+italy <- filter(countries, country == "Italy") %>% 
   select(-confirmed_acum, -deaths_acum)
 
 readr::write_csv(italy, "data/taller_ufv/italy.csv")
@@ -33,7 +46,7 @@ readr::write_csv(italy, "data/taller_ufv/italy_week.csv")
 
 # PORTUGAL ----------------------------------------------------------------
 
-portugal <- filter(by_country, country == "Portugal") %>% 
+portugal <- filter(countries, country == "Portugal") %>% 
   select(-confirmed_acum, -deaths_acum)
 
 readr::write_csv(italy, "data/taller_ufv/portugal.csv")

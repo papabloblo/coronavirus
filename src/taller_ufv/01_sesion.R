@@ -1,10 +1,20 @@
 #' 
 #' MÓDULO DE INTRODUCCIÓN A R
-#' 
 #' Minería de datos I - UFV
 #' 
 #' pablo.hidalgo@ufv.es
 #' 
+
+#' Antes de empezar, has tenido que escargar los archivos del aula virtual:
+#'   - spain.csv
+#'   - portugal_week.csv
+#'   - italy_week.csv
+#'   
+#' En Rstudio, genera un nuevo proyecto denominado ufv_mineria_datos.
+#' 
+#' Crea una carpeta `coronavirus/`. Dentro de esta carpeta, crea otras dos que
+#' se llamen `coronavirus/data` y `coronavirus/R`.
+#' Copia los .csv descargados en la carpeta `coronavirus/data`.
 
 
 # LECTURA DE DATOS --------------------------------------------------------
@@ -22,7 +32,6 @@
 #' a la memoria del programa
 
 spain <- read.csv("data/taller_ufv/spain.csv", stringsAsFactors = FALSE)
-
 
 
 # ESTRUCTURA DEL CONJUNTO DE DATOS ----------------------------------------
@@ -86,6 +95,9 @@ min(spain$date)
 
 #' Nos preguntamos si esta variable está almacenada con su tipo adecuado
 typeof(spain$date)
+
+spain$date[1]
+spain$date[1] + 1
 
 #' Ya que es una fecha, lo ideal es que tenga este formato.
 #' Podemos convertir su formato como
@@ -236,7 +248,7 @@ for (w in unique(spain$week)) {
 
 spain_week <- data.frame(country = "Spain",
                          week = unique(spain$week), 
-                         confirmed = aggr_semanas,
+                         confirmed = conf_week,
                          stringsAsFactors = FALSE)
 
 ggplot(data = spain_week, aes(x = week, y = confirmed)) +
