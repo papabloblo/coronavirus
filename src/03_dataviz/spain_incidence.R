@@ -77,8 +77,11 @@ p <- spain_ccaa %>%
     ) +
   tema() + 
   theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
         legend.position = "none",
-        axis.text.y = element_text(hjust = 0, family = "Oswald", size = 20),
+        #axis.text.y = element_text(hjust = 0, family = "Oswald", size = 20),
+    axis.text.y = element_blank(),
         axis.text.x.top = element_text(hjust = 0, family = "Oswald", size = 30),
         axis.text.x = element_text(family = "Oswald", size = 20),
         plot.title = element_text(face = "bold",
