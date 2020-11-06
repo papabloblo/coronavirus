@@ -9,7 +9,7 @@ daily_reports <- readRDS("data/01_tratamiento/daily_reports.RDS")
 spain_ccaa <- daily_reports %>% 
   filter(
     country == "Spain",
-    date > as.Date("2020-07-01"),
+    date >= as.Date("2020-07-01"),
     province != "Unknown"
     )
 
@@ -99,7 +99,7 @@ p <- spain_ccaa %>%
   scale_y_continuous(breaks = c(0, 500, 1000), expand = expansion(add = c(0,500))) + 
   scale_x_date(expand = expansion(add = c(0,30)), 
                date_labels = "%B",
-               breaks = c(as.Date("2020/09/01"), as.Date("2020/11/01")),
+               breaks = c(as.Date("2020/07/01"), as.Date("2020/09/01"), as.Date("2020/11/01")),
                date_minor_breaks = "1 month")
 
 ggsave("dataviz/spain_incidence.png", p, width = 40, height = 60, unit = "cm", dpi = 320)
